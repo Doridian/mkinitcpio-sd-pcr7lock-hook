@@ -3,7 +3,7 @@
 # Make sure to put "sd-pcr7lock" in /etc/mkinitcpio.conf
 
 pkgname=mkinitcpio-sd-pcr7lock-hook
-pkgver=1.0
+pkgver=1.1
 pkgrel=1
 pkgdesc='An initcpio hook to extend PCRs after sd-encrypt to prevent unsealing the root volume key after initramfs'
 arch=('any')
