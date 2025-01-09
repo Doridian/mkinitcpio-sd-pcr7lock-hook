@@ -1,0 +1,61 @@
+#!/usr/bin/env python
+from yaml import safe_load as yaml_load
+from json import dumps as json_dumps
+from base64 import urlsafe_b64encode
+from subprocess import check_output, check_call
+
+# User settings
+PCR_IDS = [0, 7]
+PCR_BANK = "sha256"
+# End of user settings
+
+_PCR_BANK_SIZES = {
+    "sha1": 20,
+    "sha256": 32
+}
+
+def get_rootdev() -> str:
+    with open('/proc/cmdline', 'r') as f:
+        cmdline = f.read().strip()
+
+    args = cmdline.split()
+    for arg in args:
+        if not arg.startswith("rd.luks.name="):
+            continue
+        
+        devinfo = arg.split('=')
+        return f"/dev/disk/by-uuid/{devinfo[1]}"
+
+def calculate_tpm2_pcrs(pcr_bank: str, pcrs: list[int]) -> str:
+    pcrs_yaml = yaml_load(check_output(["tpm2_eventlog", "/sys/kernel/security/tpm0/binary_bios_measurements"]))
+    pcrs_list: dict[int, int] = pcrs_yaml['pcrs'][pcr_bank]
+    if not pcrs_list:
+        raise ValueError("No PCR values found in the event log")
+
+    pcr_size = _PCR_BANK_SIZES[pcr_bank]
+
+    # --tpm2-pcrs=X:ALG=HASH+...
+    data = []
+    for pcr in pcrs:
+        fmtstr = f"%0{pcr_size*2}x"
+        data.append(f"{pcr}:{pcr_bank}={fmtstr%pcrs_list[pcr]}")
+
+    return "+".join(data)
+
+def main():
+    rootdev = get_rootdev()
+    pcr_arg = calculate_tpm2_pcrs(PCR_BANK, PCR_IDS)
+    
+    cenroll_cmd = [
+        "systemd-cryptenroll",
+        "--wipe-slot", "tpm2",
+        "--tpm2-device", "auto",
+        "--tpm2-pcrs", pcr_arg,
+        rootdev
+    ]
+    #cenroll_cmd = ["echo"] + cenroll_cmd
+    print(cenroll_cmd)
+    check_call(cenroll_cmd)
+
+if __name__ == '__main__':
+    main()

@@ -1,0 +1,11 @@
+#!/bin/sh
+
+build() {
+    add_systemd_unit systemd-pcrphase-pcr7lock.service
+}
+
+help() {
+    echo 'Locks PCR7, duh'
+}
+
+# vim: set ft=sh ts=4 sw=4 et:
