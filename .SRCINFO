@@ -1,7 +1,7 @@
 pkgbase = mkinitcpio-sd-pcr7lock-hook
 	pkgdesc = An initcpio hook to extend PCRs after sd-encrypt to prevent unsealing the root volume key after initramfs
-	pkgver = 1.2
-	pkgrel = 3
+	pkgver = 1.0
+	pkgrel = 1
 	url = https://aur.archlinux.org/mkinitcpio-cleviseal-hook
 	arch = any
 	license = MIT
@@ -12,5 +12,8 @@ pkgbase = mkinitcpio-sd-pcr7lock-hook
 	source = systemd-cryptenroll-pcr7lock
 	source = initcpio.install
 	source = systemd-pcrphase-pcr7lock.service
+	md5sums = SKIP
+	md5sums = SKIP
+	md5sums = SKIP
 
 pkgname = mkinitcpio-sd-pcr7lock-hook
