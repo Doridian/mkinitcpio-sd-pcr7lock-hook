@@ -3,7 +3,7 @@ from yaml import safe_load as yaml_load
 from subprocess import check_output, check_call
 
 # User settings
-PCR_IDS = [0, 7, 14]
+PCR_IDS = [0, 7, 8, 14]
 PCR_BANK = "sha256"
 # End of user settings
 
