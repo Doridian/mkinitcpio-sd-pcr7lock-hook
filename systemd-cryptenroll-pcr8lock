@@ -35,9 +35,10 @@ def calculate_tpm2_pcrs(pcr_bank: str, pcrs: list[int]) -> str:
     # --tpm2-pcrs=X:ALG=HASH+...
     data = []
     for pcr in pcrs:
-        if pcr == 7: # We only manipulate 7, so that's all we need to "restore"
+        if pcr == 8: # We only manipulate 8, so that's all we need to "restore"
             fmtstr = f"%0{pcr_size*2}x"
-            data.append(f"{pcr}:{pcr_bank}={fmtstr%pcrs_list[pcr]}")
+            pcr_val = pcrs_list.get(pcr, 0)
+            data.append(f"{pcr}:{pcr_bank}={fmtstr%pcr_val}")
         else:
             data.append(f"{pcr}:{pcr_bank}")
 
